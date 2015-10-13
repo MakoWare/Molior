@@ -1,8 +1,9 @@
 {
-    "dir": "~/Repos/MakoWare",
+    "name": "website",
+    "dir": "~/Repos/website",
     "commands": [
 	"ls",
 	"git pull --rebase"
     ]
-}	
+}
 

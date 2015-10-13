@@ -16,17 +16,21 @@ def test():
         print(repositoryName)
         return json.dumps(repositoryName)
     if request.headers.get('X-GitHub-Event') != "push":
+        parseResponse(request)
         print (request.data.decode("utf-8"))
         return json.dumps({'msg': "wrong event type"})
-
+    else:
+        parseResponse(request)
+        return json.dumps({'msg': "building"})
 
 def parseResponse(response):
     global repositoryName
     data = json.loads(request.data.decode("utf-8"))
     repositoryName = data['repository']['name']
+    runTasks()
     return
 
-def run():
+def runTasks():
 
     ##First Change the Directory
     f = open('config.txt', 'r')
@@ -45,8 +49,6 @@ def run():
          print(command)
          subprocess_cmd(command)
 
-    #p = subprocess.Popen([command, argument1,...], cwd=working_directory)
-    #p.wait()
 
 def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
@@ -54,7 +56,6 @@ def subprocess_cmd(command):
     print(proc_stdout)
 
 if __name__ == '__main__':
-    run()
-    # app.debug = True
-    # app.run(host='0.0.0.0', port=80)
-    # app.run()
+     app.debug = True
+     app.run(host='0.0.0.0', port=80)
+     app.run()
