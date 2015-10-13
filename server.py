@@ -39,6 +39,7 @@ def runTasks():
     commands = config['commands']
     print(dir)
     retval = os.getcwd()
+    oldDir = retval
     print ("Current working directory %s" % retval)
     os.chdir(os.path.expanduser(dir))
     retval = os.getcwd()
@@ -49,6 +50,8 @@ def runTasks():
          print(command)
          subprocess_cmd(command)
 
+    os.chdir(os.path.expanduser(oldDir))
+    print ("Directory changed successfully %s" %  os.getcwd())
 
 def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
