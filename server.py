@@ -6,52 +6,48 @@ import os
 
 app = Flask(__name__)
 
-repositoryName = ""
 
 @app.route("/", methods=['GET', 'POST'])
 def test():
     print ('got a request')
     if request.headers.get('X-GitHub-Event') == "ping":
-        parseResponse(request)
-        print(repositoryName)
-        return json.dumps(repositoryName)
-    if request.headers.get('X-GitHub-Event') != "push":
-        parseResponse(request)
-        print (request.data.decode("utf-8"))
+        runTasks(request)
+        return json.dumps({'msg' : "We Livin"})
+    elif request.headers.get('X-GitHub-Event') != "push":
         return json.dumps({'msg': "wrong event type"})
     else:
-        parseResponse(request)
+        runTasks(request)
         return json.dumps({'msg': "building"})
 
-def parseResponse(response):
-    global repositoryName
+
+def runTasks(request):
     data = json.loads(request.data.decode("utf-8"))
-    repositoryName = data['repository']['name']
-    runTasks()
-    return
+    repoName = data['repository']['name']
+    repoPath = '~/Repos/dir' + repoName
+    repoBranch = data['ref'].split("/")[-1]
 
-def runTasks():
+    print(json.dumps(request, indent=2, sort_keys=True))
+    print("repoName: %s" % repoName)
+    print("repoPath: %s" % repoPath)
+    print("repoBranch: %s" % repoBranch)
 
-    ##First Change the Directory
-    f = open('config.txt', 'r')
-    config = json.loads(f.read())
-    dir = config['dir']
-    commands = config['commands']
-    print(dir)
-    retval = os.getcwd()
-    oldDir = retval
-    print ("Current working directory %s" % retval)
-    os.chdir(os.path.expanduser(dir))
-    retval = os.getcwd()
-    print ("Directory changed successfully %s" % retval)
+    # ##Save CWD
+    # cwd = os.getcwd()
 
-    print(commands)
-    for command in commands:
-         print(command)
-         subprocess_cmd(command)
+    # ##Change to Repo Dir
+    # os.chdir(os.path.expanduser(path))
 
-    os.chdir(os.path.expanduser(oldDir))
-    print ("Directory changed successfully %s" %  os.getcwd())
+    # ##Load the Config
+    # f = open('molior.json', 'r')
+    # config = json.loads(f.read())
+    # commands = config['commands']
+
+    # print(commands)
+    # for command in commands:
+    #     print(command)
+    #     subprocess_cmd(command)
+
+    # os.chdir(os.path.expanduser(cwd))
 
 def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
@@ -59,6 +55,6 @@ def subprocess_cmd(command):
     print(proc_stdout)
 
 if __name__ == '__main__':
-     app.debug = True
-     app.run(host='0.0.0.0', port=80)
-     app.run()
+    app.debug = True
+    app.run(host='0.0.0.0', port=5000)
+    app.run()

@@ -1,9 +1,0 @@
-{
-    "name": "website",
-    "dir": "~/Repos/website",
-    "commands": [
-	"ls",
-	"git pull --rebase"
-    ]
-}
-
