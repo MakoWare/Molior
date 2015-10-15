@@ -23,31 +23,34 @@ def test():
 def runTasks(request):
     data = json.loads(request.data.decode("utf-8"))
     repoName = data['repository']['name']
-    repoPath = '~/Repos/dir' + repoName
+    repoPath = '~/Repos/' + repoName
     repoBranch = data['ref'].split("/")[-1]
 
-    print(json.dumps(request, indent=2, sort_keys=True))
+    print("running tasks")
+    print(json.dumps(data, indent=2, sort_keys=True))
     print("repoName: %s" % repoName)
     print("repoPath: %s" % repoPath)
     print("repoBranch: %s" % repoBranch)
 
-    # ##Save CWD
-    # cwd = os.getcwd()
+    ##Save CWD
+    cwd = os.getcwd()
 
-    # ##Change to Repo Dir
-    # os.chdir(os.path.expanduser(path))
+    ##Change to Repo Dir
+    os.chdir(os.path.expanduser(repoPath))
 
-    # ##Load the Config
-    # f = open('molior.json', 'r')
-    # config = json.loads(f.read())
-    # commands = config['commands']
+    ##Load the Config
+    f = open('molior.json', 'r')
+    config = json.loads(f.read())
+    branches = config['branches']
+    branchCommands = branches[repoBranch]['commands']
+    print(json.dumps(config, indent=2, sort_keys=True))
+    print(branchCommands)
 
-    # print(commands)
-    # for command in commands:
-    #     print(command)
-    #     subprocess_cmd(command)
+    for command in branchCommands:
+        print(command)
+        subprocess_cmd(command)
 
-    # os.chdir(os.path.expanduser(cwd))
+    os.chdir(os.path.expanduser(cwd))
 
 def subprocess_cmd(command):
     process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
